@@ -1,0 +1,6 @@
+<font size="6" color="black"> </p>
+<p><font size="6" color="blue">public</font> <font size="6" color="blue">class</font> <font size="6" color="black">ExampleCode <font size="6" color="black">{ </p>
+<font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="blue">public</font> <font size="6" color="black">static <font size="6" color="black">main(String[] <font size="6" color="black">args){ </p>
+<font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black">System.out.println("Hello <font size="6" color="black">World"); </p>
+<font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black"> <font size="6" color="black">} </p>
+<font size="6" color="black">} </p>

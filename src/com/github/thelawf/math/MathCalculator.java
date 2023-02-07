@@ -1,0 +1,235 @@
+package com.github.thelawf.math;
+
+
+import java.awt.*;
+
+public class MathCalculator {
+
+    private MathCalculator() {}
+
+    /**
+     * 这里的Point类是java.awt里面的类
+     * @param p1 第一个点
+     * @param p2 第二个点
+     * @return 上述两点间的距离
+     */
+    public static double distanceBetweenPoints(Point p1, Point p2){
+        return Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2), 0.5);
+    }
+
+    /**
+     * 传入四个双精度浮点数
+     * @param x1 第一个点的x坐标
+     * @param y1 第一个点的y坐标
+     * @param x2 第二个点的x坐标
+     * @param y2 第二个点的y坐标
+     * @return 上述两点间的距离
+     */
+    public static double distanceBetweenPoints(double x1, double y1, double x2, double y2){
+        return Math.pow(Math.pow(x1 - x2, 2) + Math.pow(x2 - y2, 2), 0.5);
+    }
+
+    public static double distanceBetweenPoints3D(double x1, double y1, double z1, double x2, double y2, double z2) {
+        return Math.pow(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2) + Math.pow(z1 + z2, 2), 0.5);
+    }
+
+    /**
+     * 获取某个点在旋转之后的二维坐标
+     * @param x 将要被执行旋转操作的点的x坐标
+     * @param y 将要被执行旋转操作的点的x坐标
+     * @param pivotX 该点的旋转中心，即枢轴点的x坐标
+     * @param pivotY 该点的旋转中心，即枢轴点的y坐标
+     * @param degrees 转过的角度
+     * @return 新的平面直角坐标
+     */
+    public static RectangularCoordinate getRotatedCoord2D(double x, double y,
+                                                          double pivotX, double pivotY,
+                                                          float degrees) {
+        // get radians
+        float l = (float) ((degrees * Math.PI) / 180);
+
+        //sin/cos value
+        float cosv = (float) Math.cos(l);
+        float sinv = (float) Math.sin(l);
+
+        // calc new point
+        double newX = (x - pivotX) * cosv - (y - pivotY) * sinv + pivotX;
+        double newY = (x - pivotX) * sinv + (y - pivotY) * cosv + pivotY;
+        return new RectangularCoordinate(newX, newY, 0);
+    }
+
+    public static RectangularCoordinate getIntersectPoint3D(LineSegment3D l1, LineSegment3D l2)  {
+        return getIntersectPoint3D(l1.x1, l1.y1, l1.z1, l1.x2, l1.y2, l1.z2,
+                l2.x1, l2.y1, l2.z1, l2.x2, l2.y2, l2.z2);
+    }
+
+    /**
+     * 设两条线段的端点分别为 (x1,y1,z1), (x2,y2,z2) 和 （x3,y3,z3), (x4,y4,z4)，那么第一条线段方程为U(t1)
+     * <p>
+     * x=x1+(x2-x1)t1
+     * <p>
+     * y=y1+(y2-y1)t1
+     * <p>
+     * z=z1+(z2-z1)t1
+     * <p>
+     * 0<=t<=1
+     * <p>
+     * 同样，第二条线段方程为V(t2)
+     * <p>
+     * x=x3+(x4-x3)t2
+     * <p>
+     * y=y3+(y4-y3)t2
+     * <p>
+     * z=z3+(z4-z3)t2
+     * <p>
+     * 0<=t<=1
+     * <p>
+     * 我们的问题就成为是否存在t1,t2,使得U(t1)=V(t2)，也就是求t1,t2,使得
+     * <p>
+     * x1+(x2-x1)t1=x3+(x4-x3)t2
+     * <p>
+     * y1+(y2-y1)t1=y3+(y4-y3)t2
+     * <p>
+     * z1+(z2-z1)t1=z3+(z4-z3)t2
+     * <p>
+     * 可以通过前面两条方程求出t1,t2,然后带入第三条方程进行检验解是否符合。此外还要求0<=t1,t2<=1，否则还是不相交
+     * <p>
+     * @param x1 直线1的起点x坐标
+     * @param y1 直线1的起点y坐标
+     * @param z1 直线1的起点z坐标
+     * @param x2 直线1的终点x坐标
+     * @param y2 直线1的终点y坐标
+     * @param z2 直线1的终点z坐标
+     * @param x3 直线2的起点x坐标
+     * @param y3 直线2的起点y坐标
+     * @param z3 直线2的起点z坐标
+     * @param x4 直线2的终点x坐标
+     * @param y4 直线2的终点y坐标
+     * @param z4 直线2的终点z坐标
+     * @throws PointNonExistException 直线不存在交点
+     * @return 直线1和直线2的交点在三维空间中的坐标
+     */
+    public static RectangularCoordinate getIntersectPoint3D(double x1, double y1, double z1,
+                                                            double x2, double y2, double z2,
+                                                            double x3, double y3, double z3,
+                                                            double x4, double y4, double z4) {
+
+        double t1 = ((y1 -y3) * (x3 - x4) - (y3 - y4) * (x1 - x3)) /
+                ((y3 - y1) * (x1 - x2) - (x3 -x4) * (y1 - y2));
+        double t2 = ((x1 - x3) + (x1 - x2) * t1) / (x3 - x4);
+
+        if (t1 <= 0 || t1 >= 1 || t2 <= 0 || t2 >= 1) {
+            // throw new PointNonExistException("两直线平行或线性相关，不存在交点");
+        }
+        else {
+
+        }
+        double x = x1 + (x1 - x2) * t1;
+        double y = y1 + (y1 - y2) * t1;
+        double z = z1 + (z1 - z2) * t1;
+        System.out.println(new RectangularCoordinate(t1, y1, z1));
+        return new RectangularCoordinate(x,y,z);
+    }
+
+    /**
+     * 这里不会抛出一个{@link TriangleNotUniqueException} 异常
+     * @param vertexAIn 三角形∠A所对应的点的坐标
+     * @param vertexBIn 三角形∠B所对应的点的坐标
+     * @param vertexCIn 三角形∠C所对应的点的坐标
+     * @return 返回一个平面三角形对象
+     */
+    public static Triangle2D solveTriangle(Point vertexAIn, Point vertexBIn, Point vertexCIn) {
+        return new Triangle2D(vertexAIn, vertexBIn, vertexCIn);
+    }
+
+    /**
+     * 求三维向量模长的运算
+     * @param x 三维向量的x坐标
+     * @param y 三维向量的y坐标
+     * @param z 三维向量的z坐标
+     * @return 返回三维向量的模长，或者立方体体对角线的长度
+     */
+    public static double toModulus3D(double x, double y, double z) {
+        return Math.pow(x * x + y * y + z * z, 0.5);
+    }
+
+    public static double toModulus2D(double x, double y) {
+        return Math.pow(x * x + y * y, 0.5);
+    }
+
+    /**
+     * 计算方法：设斜边为r，两条直角边为x和y，斜边与y轴夹角为d，那么——
+     * <p>
+     * 1. 求出 tan(d) 的值，为一个常量，用a表示，由已知条件可得：tan()函数表示的是对边比邻边，即x比上y，且两条直角边的平方和等于斜边的平方，所以——
+     * <p>
+     * 2. 设方程① -- x / y = a;
+     * <p>
+     * 3. 设方程② -- x^2 + y^2 = r^2;
+     * <p>
+     * 4. 联立方程①②可得：
+     * <p>
+     *     x = a * y;
+     * <p>
+     *     a^2 * y^2 + y^2 = r^2;
+     * <p>
+     *     y^2 * (a^2 + 1) = r^2;
+     * <p>
+     *   ∴ y = √(z^2 / a^2 + 1)
+     * @param hypotenuse 斜边长，即空间向量在该平面上的投影线段
+     * @param roll 斜边与y轴的夹角
+     * @return 返回一个仅有可知的两边组成的平面向量坐标
+     */
+    public static RectangularCoordinate toRollCoordinate(double hypotenuse, double roll) {
+        double x = Math.sqrt(Math.pow(hypotenuse, 2) / Math.pow(Math.tan(roll), 2) + 1);
+        return new RectangularCoordinate(x, Math.tan(roll) * x, 0);
+    }
+
+    public static RectangularCoordinate toYawCoordinate(double hypotenuse, double yaw) {
+        double z = Math.sqrt(Math.pow(hypotenuse, 2) /  Math.pow(Math.tan(yaw), 2) + 1);
+        return new RectangularCoordinate(Math.tan(yaw) * z, 0, z);
+    }
+
+    public static RectangularCoordinate toPitchCoordinate(double hypotenuse, double pitch) {
+        double y = Math.sqrt(Math.pow(hypotenuse, 2) /  Math.pow(Math.tan(pitch), 2) + 1);
+        return new RectangularCoordinate(0, y, Math.tan(pitch) * y);
+    }
+
+    /**
+     * 球坐标转直角坐标
+     * @param sc 球坐标对象，是一个三维的向量
+     * @return 返回空间直角坐标系对象
+     */
+    public static RectangularCoordinate toRectCoordinate(SphericalCoordinate sc) {
+        return new RectangularCoordinate(sc.radius * Math.sin(sc.theta) * Math.cos(sc.phi),
+                sc.radius * Math.sin(sc.theta) * Math.sin(sc.phi),
+                sc.radius * Math.cos(sc.theta));
+    }
+
+    /**
+     * 直角坐标转球坐标
+     * @param rc 空间直角坐标系对象，同样是一个三维的向量
+     * @return 返回球坐标系对象
+     */
+    public static SphericalCoordinate toSphereCoordinate(RectangularCoordinate rc) {
+        double r = MathCalculator.toModulus3D(rc.x, rc.y, rc.z);
+        return new SphericalCoordinate(r, Math.acos(rc.z / r), Math.atan(rc.y / rc.x));
+    }
+
+    /**
+     * 弧度值除以Math.PI的结果为【180度的几分之几】
+     * @param radIn 弧度值
+     * @return 角度值
+     */
+    public static double toDeg(double radIn) {
+        return radIn / Math.PI * 180d;
+    }
+
+    /**
+     * Math.PI 除以180度的结果为【每一角度等于多少弧度】
+     * @param degIn 角度值
+     * @return 弧度值
+     */
+    public static double toRad(double degIn) {
+        return degIn * Math.PI / 180d;
+    }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "gensokyoontology-danmaku",
+  "description": "the way to define and storage the motion of danmakus in Minecraft mod Gensokyoontology",
+  "properties": {
+    "function": {
+      "type": "object",
+      "properties": {
+        "init_location": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "muzzles": {
+      "type": "object"
+    }
+  }
+}

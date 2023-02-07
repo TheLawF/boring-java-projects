@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="GamblingGame.GambleGame">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties>
+      <preferredSize width="800" height="600"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <component id="57fde" class="javax.swing.JButton" binding="button1">
+        <constraints/>
+        <properties>
+          <font name="Webdings" size="26" style="1"/>
+          <text value="十连抽取"/>
+        </properties>
+      </component>
+      <component id="fe7f4" class="javax.swing.JButton" binding="button2">
+        <constraints/>
+        <properties>
+          <font name="Webdings" size="26" style="1"/>
+          <text value="查看仓库"/>
+        </properties>
+      </component>
+      <component id="2b3d9" class="javax.swing.JTextArea" binding="textArea1" default-binding="true">
+        <constraints/>
+        <properties>
+          <columns value="100"/>
+          <preferredSize width="700" height="200"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
