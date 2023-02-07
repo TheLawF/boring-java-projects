@@ -15,9 +15,9 @@ public class MahjongUtil {
     protected static final String FULU_START = "f/";
     protected static final String FULU_END = "/";
 
-    protected static final String[] cardArray = {"🀀", "🀁", "🀂", "🀃","🀄", "🀅", "🀆","🀇", "🀈", "🀉", "🀊", "🀋", "🀌", "🀍", "🀎", "🀏","🀐", "🀑", "🀒", "🀓", "🀔", "🀕", "🀖", "🀗", "🀘",
-            "🀙", "🀚", "🀛", "🀜", "🀝", "🀞", "🀟", "🀠", "🀡"};
-    protected static final List<String> allMahjongs =  Arrays.asList(cardArray);
+
+    protected static final String CONSTANT = "\uD83C";
+    protected static final ArrayList<String> allMahjong = new ArrayList<>(Arrays.asList(Rules.allcards));
 
     public static StringBuilder formatMahjongArray(List<String> mahjongList,
                                                    List<String> chiList,
@@ -55,47 +55,103 @@ public class MahjongUtil {
     }
 
     public static HashMap<String, String> getMahjongFormatMap(String pattern) {
+        pattern = pattern.toLowerCase();
         HashMap<String, String> formatMap = new HashMap<>();
-
         ArrayList<String> list = new ArrayList<>();
-        if (pattern.contains(MAN_ZU)) {
-            ArrayList<String> l1 = new ArrayList<>(Arrays.asList(pattern.split(MAN_ZU)));
-            formatMap.put(MAN_ZU, l1.get(0));
-            System.out.println(list);
-            l1.remove(0);
-            list = l1;
-        }
 
-        if (pattern.contains(PIN_ZU)) {
-            ArrayList<String> l2 = new ArrayList<>(Arrays.asList(list.get(0).split(PIN_ZU)));
-            formatMap.put(PIN_ZU, l2.get(0));
-            System.out.println(list);
-            l2.remove(0);
-            list = l2;
-        }
+        list = getStrings(pattern, formatMap, list, MAN_ZU);
+        list = getStrings(pattern, formatMap, list, PIN_ZU);
+        list = getStrings(pattern, formatMap, list, SOU_ZU);
+        list = getStrings(pattern, formatMap, list, CHARACTER_HAI);
 
-        if (pattern.contains(SOU_ZU)) {
-            ArrayList<String> l3 = new ArrayList<>(Arrays.asList(list.get(0).split(SOU_ZU)));
-            formatMap.put(SOU_ZU, l3.get(0));
-            System.out.println(list);
-            l3.remove(0);
-            list = l3;
-        }
-
-        if (pattern.contains(CHARACTER_HAI)) {
-            ArrayList<String> l4 = new ArrayList<>(Arrays.asList(list.get(0).split(CHARACTER_HAI)));
-            formatMap.put(CHARACTER_HAI, l4.get(0));
-            System.out.println(list);
-            l4.remove(0);
-            list = l4;
-        }
-
-        System.out.println(list.get(0).contains(FULU_END));
         if (list.size() != 0 && StringLogic.containsPair(list.get(0), FULU_START, FULU_END)) {
             formatMap.put(FULU_START, StringLogic.getStringBetween(list.get(0),
                     FULU_START, FULU_END));
         }
         return formatMap;
+    }
+
+    public static String toMahjongString(String pattern) {
+        HashMap<String, String> formatMap = getMahjongFormatMap(pattern);
+        StringBuilder builder = new StringBuilder();
+        buildStringIfContainsKey(formatMap, builder, MAN_ZU);
+        buildStringIfContainsKey(formatMap, builder, PIN_ZU);
+        buildStringIfContainsKey(formatMap, builder, SOU_ZU);
+        buildStringIfContainsKey(formatMap, builder, CHARACTER_HAI);
+
+        return builder.toString();
+    }
+
+    public static ArrayList<String> toMahjongList(String pattern) {
+        String mahjongString = toMahjongString(pattern);
+        ArrayList<String> mahjongList = new ArrayList<>();
+        for (int i = 0; i < mahjongString.length(); i++) {
+            mahjongList.add(String.valueOf(mahjongString.charAt(i)));
+        }
+        return mahjongList;
+    }
+    // public static String toPatternString(String mahjong) {
+    //     StringBuilder builder = new StringBuilder();
+    //     return builder.toString();
+    // }
+
+    private static void buildStringIfContainsKey(HashMap<String, String> formatMap, StringBuilder builder, String key) {
+        if (formatMap.containsKey(key)) {
+            if (Objects.equals(key, MAN_ZU)) {
+                String s = formatMap.get(key);
+                int unicode;
+                for (int j = 0; j < s.length(); j++) {
+                    unicode = s.charAt(j) + 56278;
+                    builder.append(CONSTANT);
+                    builder.append((char) unicode);
+                }
+            }
+            if (Objects.equals(key, PIN_ZU)) {
+                String s = formatMap.get(key);
+                int unicode;
+                for (int j = 0; j < s.length(); j++) {
+                    unicode = s.charAt(j) + 56296;
+                    builder.append(CONSTANT);
+                    builder.append((char) unicode);
+                }
+            }
+            if (Objects.equals(key, SOU_ZU)) {
+                String s = formatMap.get(key);
+                int unicode;
+                for (int j = 0; j < s.length(); j++) {
+                    unicode = s.charAt(j) + 56287;
+                    builder.append(CONSTANT);
+                    builder.append((char) unicode);
+                }
+            }
+            if (Objects.equals(key, CHARACTER_HAI)) {
+                String s = formatMap.get(key);
+                int unicode;
+                for (int j = 0; j < s.length(); j++) {
+                    unicode = s.charAt(j) + 56271;
+                    builder.append(CONSTANT);
+                    builder.append((char) unicode);
+                }
+            }
+        }
+    }
+
+    private static ArrayList<String> getStrings(String pattern, HashMap<String, String> formatMap, ArrayList<String> list, String characterHai) {
+        if (list.size() == 0) {
+            if (pattern.contains(characterHai)) {
+                list = new ArrayList<>(Arrays.asList(pattern.split(characterHai)));
+                System.out.println(list);
+                formatMap.put(characterHai, list.get(0));
+                list.remove(0);
+            }
+        }
+        else if (pattern.contains(characterHai)) {
+            ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(list.get(0).split(characterHai)));
+            formatMap.put(characterHai, arrayList.get(0));
+            arrayList.remove(0);
+            list = arrayList;
+        }
+        return list;
     }
 
 }
